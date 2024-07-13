@@ -1,0 +1,43 @@
+
+
+shape zfx
+    lines red
+    line E 0
+    curve 0,0 50,180 100,5
+    curve 105,5 155,180 205,0
+    curve 200,0 155,140 110,0
+    curve 90,0 50,140 5,0
+end
+
+shape H 
+    lines red
+    line E 10
+    line N 40
+    line E 60
+    line S 40
+    line E 10
+    line N 90
+    line W 10
+    line S 40
+    line W 60
+    line N 40
+    line W 10
+    line S 90
+end
+
+shape Y
+    lines red
+    line E 10
+    line N 50
+    line NE 50
+    line W 10
+    line SW 42
+    line NW 42
+    line W 10
+    line SE 50
+    line S 50
+end
+draw zfx at 0,0
+draw H at 220,0
+draw Y at 340,0
+

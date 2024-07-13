@@ -1,0 +1,89 @@
+Scene:
+    shapes*=Shape
+    draw_instructions*=DrawInstruction
+    print*=PrintF
+    circle*=Circle
+
+;
+
+Shape:
+    'shape' name=ID
+        line_color=LineColor?
+        fill_color=FillColor?
+        lines+=Line
+        curves*=Curve
+    'end'
+;
+Circle:
+    'surround' x=INT ',' y=INT 'draw' shape=[Shape] 'with' radius=INT
+;
+//打印到屏幕
+PrintF:
+    'print' text=STRING 'at' x=INT ',' y=INT
+;
+//直线颜色列表
+Color:
+    'red' | 'green' | 'blue' | 'yellow' | 'magenta' | 'cyan' | 'black' | 'white' | /#[0-9a-f]{6}/
+;
+//直线颜色关键字
+LineColor: 
+    'lines' color=Color
+;
+//填充颜色关键字
+FillColor:
+    'fill' color=Color
+;
+//绘制直线关键字
+Line:
+    'line' direction=Direction length=INT
+;
+//曲线
+Curve:
+    'curve' ctrlpoint+=CtrlPoint
+;
+//控制点
+CtrlPoint:
+    x=INT ',' y=INT
+;
+
+Direction:
+    bearing=Bearing | angle=Angle
+;
+
+Bearing:
+    'E' | 'NE' | 'SE' | 'W' | 'NW' | 'SW' | 'N' | 'S'
+;
+
+Angle:
+    degrees=FLOAT ('°' | 'deg')
+;
+
+DrawInstruction:
+    'draw' shape=[Shape] 
+    text=InnerText?
+    'at' x=INT ',' y=INT  
+    inwhere=IN?
+
+;
+
+IN:
+    'in' shape=[Shape]//引用Shape对象
+;
+InnerText:
+    '(' text=STRING ')'
+;
+
+
+Comment:
+    /\/\*(.|\n)*?\*\// | /\/\/.*?$/
+;
+
+
+
+//   ?  :该属性是可选的
+//   *  :该属性可以出现0次或多次
+//   +  :该属性可以出现1次或多次
+//   [] :该属性可以出现0次或1次，引用对象
+
+
+//   |  :表示选择
