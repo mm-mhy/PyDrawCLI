@@ -1,12 +1,10 @@
-
-
 shape zfx
     lines red
     line E 0
-    curve 0,0 50,180 100,5
-    curve 105,5 155,180 205,0
-    curve 200,0 155,140 110,0
-    curve 90,0 50,140 5,0
+    curve 0,0 50,180 100,5 150,90
+    curve 155,90 205,180 255,5 305,90
+    curve 300,90 255,140 210,90 165,0
+    curve 145,0 105,140 65,0 25,0
 end
 
 shape H 
@@ -37,7 +35,7 @@ shape Y
     line SE 50
     line S 50
 end
+
 draw zfx at 0,0
 draw H at 220,0
 draw Y at 340,0
-
