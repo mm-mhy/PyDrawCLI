@@ -1,5 +1,6 @@
-from textx import metamodel_from_file 
 import turtle
+from textx import metamodel_from_file 
+
 class Shape:
     def __init__(self, name: str, x: int, y: int):
         self.name = name
@@ -7,36 +8,36 @@ class Shape:
         self.y = y
     def __str__(self):
         return self.name
-#采用二次贝塞尔曲线画法
-def draw_curve_Bezier(points): 
-    # for p in points:
-    #     turtle.goto(p.x,p.y)
-    #     turtle.write(str(p.x)+','+str(p.y))
-    # turtle.up()
-    # turtle.goto(points[0].x,points[0].y)
-    # turtle.down()
-    i=0
-    while i<=1:
-        f1=(1-i)**2
-        f2=2*(1-i)*i
-        f3=i**2
-        x=f1*points[0].x+f2*points[1].x+f3*points[2].x
-        y=f1*points[0].y+f2*points[1].y+f3*points[2].y
-        turtle.goto(x,y)
-        i+=0.1
+    
+#采用三次贝塞尔曲线画法
+def draw_curve_Bezier(points):
+    if len(points) != 4:
+        raise ValueError("三次贝塞尔曲线需要四个控制点")
+    i = 0
+    while i <= 1:
+        f1 = (1 - i) ** 3
+        f2 = 3 * (1 - i) ** 2 * i
+        f3 = 3 * (1 - i) * i ** 2
+        f4 = i ** 3
+
+        x = f1 * points[0].x + f2 * points[1].x + f3 * points[2].x + f4 * points[3].x
+        y = f1 * points[0].y + f2 * points[1].y + f3 * points[2].y + f4 * points[3].y
+
+        turtle.goto(x, y)
+        i += 0.01  # 步长决定绘画速度
 
 def draw_shape(shape):
-        turtle.pencolor(shape.line_color.color if shape.line_color is not None else 'black')
-        turtle.fillcolor(shape.fill_color.color if shape.fill_color is not None else 'white')
-        turtle.down()
-        turtle.begin_fill()
-        for l in shape.lines:
-            draw_line(l)
-        if shape.curves is not None:
-            for c in shape.curves:
-                draw_curve_Bezier(c.ctrlpoint)
-        turtle.up() 
-        turtle.end_fill()
+    turtle.pencolor(shape.line_color.color if shape.line_color is not None else 'black')
+    turtle.fillcolor(shape.fill_color.color if shape.fill_color is not None else 'white')
+    turtle.down()
+    turtle.begin_fill()
+    for l in shape.lines:
+        draw_line(l)
+    if shape.curves is not None:
+        for c in shape.curves:
+            draw_curve_Bezier(c.ctrlpoint)
+    turtle.up() 
+    turtle.end_fill()
 
 #绘制直线
 def draw_line(l):
@@ -64,7 +65,7 @@ def draw_line(l):
 def algorithm(scene):
     x=0
     y=0
-#解析draw命令
+#解析 draw命令
     for d in scene.draw_instructions:
         x=d.x
         y=d.y
@@ -88,13 +89,12 @@ def algorithm(scene):
         if d.text is not None:
             turtle.goto(x,y-16)
             turtle.write(d.text.text)
-  
             
 #解析 print命令
     for p in scene.print:
         turtle.goto(p.x,p.y)
         turtle.write(p.text)
-#解析circle命令
+#解析 circle命令
     for c in scene.circle:
         turtle.goto(c.x+ c.radius, c.y)
         draw_shape(c.shape)
@@ -104,9 +104,6 @@ def algorithm(scene):
         draw_shape(c.shape)
         turtle.goto(c.x, c.y - c.radius)
         draw_shape(c.shape)
-
-
-
 
 #主函数
 Shapelist=[]

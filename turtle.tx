@@ -1,3 +1,4 @@
+// DSL语法定义，可拓展命令和规则
 Scene:
     shapes*=Shape
     draw_instructions*=DrawInstruction
@@ -14,33 +15,41 @@ Shape:
         curves*=Curve
     'end'
 ;
+
 Circle:
     'surround' x=INT ',' y=INT 'draw' shape=[Shape] 'with' radius=INT
 ;
+
 //打印到屏幕
 PrintF:
     'print' text=STRING 'at' x=INT ',' y=INT
 ;
+
 //直线颜色列表
 Color:
     'red' | 'green' | 'blue' | 'yellow' | 'magenta' | 'cyan' | 'black' | 'white' | /#[0-9a-f]{6}/
 ;
+
 //直线颜色关键字
 LineColor: 
     'lines' color=Color
 ;
+
 //填充颜色关键字
 FillColor:
     'fill' color=Color
 ;
+
 //绘制直线关键字
 Line:
     'line' direction=Direction length=INT
 ;
+
 //曲线
 Curve:
-    'curve' ctrlpoint+=CtrlPoint
+    'curve' ctrlpoint+=CtrlPoint ctrlpoint+=CtrlPoint ctrlpoint+=CtrlPoint ctrlpoint+=CtrlPoint
 ;
+
 //控制点
 CtrlPoint:
     x=INT ',' y=INT
