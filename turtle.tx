@@ -1,10 +1,26 @@
 Scene:
     shapes*=Shape
-    draw_instructions*=DrawInstruction
     print*=PrintF
+    square*=Square
     circle*=Circle
-
+    draw_instructions*=DrawInstruction
+    transform*=Transform
 ;
+
+
+Transform:
+    translate=Translation|rotate=Rotation|scale=Scale
+;
+Translation:
+    'translate' shape=[Graph_select] x=INT ',' y=INT
+;
+Rotation:
+    'rotate' shape=[Graph_select] angle=FLOAT
+;
+Scale:
+    'scale' shape=[Graph_select] x=FLOAT ',' y=FLOAT
+;
+
 
 Shape:
     'shape' name=ID
@@ -15,8 +31,36 @@ Shape:
     'end'
 ;
 Circle:
-    'surround' x=INT ',' y=INT 'draw' shape=[Shape] 'with' radius=INT
+    'circle' name=ID
+        line_color=LineColor?
+        fill_color=FillColor?
+        radius=Radius
+    'end'
 ;
+Square:
+    'square' name=ID
+        line_color=LineColor?
+        fill_color=FillColor?
+        special=Special
+    'end'
+;
+Special:
+    Size | TwoPoint
+;
+Size:
+    'width' width=INT  'height' height=INT
+;
+TwoPoint:
+    'lrc' x1=INT ',' y1=INT
+;
+//半径
+Radius:
+    'radius' r+=R
+;
+R:
+    INT | FLOAT
+;
+
 //打印到屏幕
 PrintF:
     'print' text=STRING 'at' x=INT ',' y=INT
@@ -49,21 +93,25 @@ CtrlPoint:
 Direction:
     bearing=Bearing | angle=Angle
 ;
-
+//可选择列表
 Bearing:
     'E' | 'NE' | 'SE' | 'W' | 'NW' | 'SW' | 'N' | 'S'
 ;
-
+//度数
 Angle:
     degrees=FLOAT ('°' | 'deg')
 ;
-
+//绘图基本指令
 DrawInstruction:
-    'draw' shape=[Shape] 
-    text=InnerText?
+    'draw' shape=[Graph_select] /*ID引用*/
+    text=InnerText?/*添加文字*/
     'at' x=INT ',' y=INT  
-    inwhere=IN?
+    inwhere=IN?/*定位*/
 
+;
+
+Graph_select:
+    Shape | Circle | Square
 ;
 
 IN:
