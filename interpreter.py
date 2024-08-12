@@ -501,8 +501,8 @@ def algorithm(scene):
 def main():
 #主函数
 
-    turtle_meta = metamodel_from_file("test_01/turtle.tx")
-    scene = turtle_meta.model_from_file("test_01/test.turtle")
+    turtle_meta = metamodel_from_file("turtle.tx")
+    scene = turtle_meta.model_from_file("test.turtle")
     turtle.Screen().title("图形绘制展示窗口")
     turtle.hideturtle()
     turtle.speed(0)
