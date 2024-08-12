@@ -16,17 +16,60 @@ class Shape:
         return self.name
 #绘制坐标轴
 def draw_axis():
-    turtle.pencolor('black')
-    turtle.up()
-    turtle.goto(-400,0)
-    turtle.down()
-    turtle.goto(400,0)
-    turtle.up()
-    turtle.goto(0,400)
-    turtle.down()
-    turtle.goto(0,-400)
+    turtle.pencolor('black')  
+    turtle.up()  
+    turtle.goto(-400, 0)  
+    turtle.down()  
+    turtle.goto(400, 0)  
+
+    # 添加X轴刻度和标签  
+    for x in range(-400, 401, 50):  
+        turtle.up()  
+        turtle.goto(x, -10)  
+        turtle.down()  
+        turtle.goto(x, 10)  
+        # 添加刻度标签  
+        turtle.up()  
+        turtle.goto(x, -30)  
+        turtle.write(x, align="center")  
+
+    # 绘制Y轴  
+    turtle.up()  
+    turtle.goto(0, 400)  
+    turtle.down()  
+    turtle.goto(0, -400)  
+
+    # 添加Y轴刻度和标签  
+    for y in range(-400, 401, 50):  
+        turtle.up()  
+        turtle.goto(-10, y)  
+        turtle.down()  
+        turtle.goto(10, y)  
+        # 添加刻度标签  
+        turtle.up()  
+        turtle.goto(-30, y)  
+        turtle.write(y, align="center")  
+
+    # 添加箭头  
+    turtle.pensize(2)  
+    turtle.up()  
+    turtle.goto(420, 0)  # 右侧箭头  
+    turtle.down()  
+    turtle.goto(400, 10)  
+    turtle.goto(400, -10)  
+    turtle.goto(420, 0)  
+
+    turtle.up()  
+    turtle.goto(0, 420)  # 上侧箭头  
+    turtle.down()  
+    turtle.goto(10, 400)  
+    turtle.goto(-10, 400)  
+    turtle.goto(0, 420)  
+
     turtle.up()
     turtle.pencolor('red')
+
+
 
 #将模型的曲线点集转化为一般二维数组
 def points_to_list(points):
@@ -85,6 +128,7 @@ def draw_shape(shape):
 def draw_circle(circle,x,y):
     turtle.pencolor(circle.line_color.color if circle.line_color is not None else 'black')
     turtle.fillcolor(circle.fill_color.color if circle.fill_color is not None else 'white')
+    turtle.pensize(circle.line_size.size if circle.line_size is not None else 1)
     radii = circle.radius.r   
     turtle.up() 
     turtle.goto(x, y)
@@ -111,6 +155,7 @@ def draw_circle(circle,x,y):
 def draw_square(square,x,y):
     turtle.pencolor(square.line_color.color if square.line_color is not None else 'black')
     turtle.fillcolor(square.fill_color.color if square.fill_color is not None else 'white')
+    turtle.pensize(square.line_size.size if square.line_size is not None else 1)
 
     if hasattr(square.special, 'width') and hasattr(square.special, 'height'):
         turtle.up()
@@ -456,8 +501,8 @@ def algorithm(scene):
 def main():
 #主函数
 
-    turtle_meta = metamodel_from_file("turtle.tx")
-    scene = turtle_meta.model_from_file("test_01.turtle")
+    turtle_meta = metamodel_from_file("test_01/turtle.tx")
+    scene = turtle_meta.model_from_file("test_01/test.turtle")
     turtle.Screen().title("图形绘制展示窗口")
     turtle.hideturtle()
     turtle.speed(0)
