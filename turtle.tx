@@ -1,4 +1,5 @@
 Scene:
+    background_color=Background_Color?
     shapes*=Shape
     print*=PrintF
     square*=Square
@@ -6,7 +7,9 @@ Scene:
     draw_instructions*=DrawInstruction
     transform*=Transform
 ;
-
+Background_Color:
+    'bgcolor' color=Color
+;
 
 Transform:
     translate=Translation|rotate=Rotation|scale=Scale
@@ -25,6 +28,7 @@ Scale:
 Shape:
     'shape' name=ID
         line_color=LineColor?
+        line_size=LineSize?
         fill_color=FillColor?
         lines+=Line
         curves*=Curve
@@ -43,6 +47,9 @@ Square:
         fill_color=FillColor?
         special=Special
     'end'
+;
+LineSize:
+    'linesize' size=INT
 ;
 Special:
     Size | TwoPoint
