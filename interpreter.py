@@ -68,6 +68,7 @@ def draw_curve_Bezier(points):
 def draw_shape(shape):
         turtle.pencolor(shape.line_color.color if shape.line_color is not None else 'black')
         turtle.fillcolor(shape.fill_color.color if shape.fill_color is not None else 'white')
+        turtle.pensize(shape.line_size.size if shape.line_size is not None else 1)
         turtle.down()
         turtle.begin_fill()
         #画直线
@@ -382,6 +383,7 @@ def transform(trans,shapeobject,transform_type):
 
 #整个场景的语句解析
 def algorithm(scene):
+    turtle.bgcolor(scene.background_color.color if scene.background_color is not None else "white")
     x=0
     y=0
 #解析draw命令
