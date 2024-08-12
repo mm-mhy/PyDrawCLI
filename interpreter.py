@@ -2,7 +2,7 @@ from textx import metamodel_from_file
 import turtle
 import math
 import Basic_trans as bt
-Shapelist=[]
+
 
 
 #shape类，用于存储模型信息，包含名称、开始位置、顶点点集
@@ -14,17 +14,144 @@ class Shape:
         self.points = []
     def __str__(self):
         return self.name
+
+#一、解析背景指令
+def bgcolor_instrusction(color:str):
+    turtle.bgcolor(color)
+
+#二、解析坐标轴指令
+def axis_instrusction(isaxis:bool):
+    if isaxis:
+        draw_axis()
+
+#三、解析绘制指令
+def draw_instruction(draw_instructions):
+    x=0
+    y=0
+
+    for d in draw_instructions:
+        x=d.x
+        y=d.y
+        points=[]
+        curves_points=[]
+        turtle.penup()
+        turtle.goto(d.x if d.x is not None else 0,
+                d.y if d.y is not None else 0)
+
+        #解析in命令
+        # if d.inwhere is not None:
+        #     for s in Shapelist:
+        #         if s.name == d.inwhere.shape.name:
+        #             x=s.x+d.x
+        #             y=s.y+d.y
+        #             turtle.goto(x,y)
+        
+        turtle.pendown()
+        if "Shape" in str(d.shape):
+            draw_shape(d.shape)
+            lines_points,curves_points= get_point(d.shape,d.x,d.y)
+            points.append(lines_points)
+            points.append(curves_points)
+
+        #执行画圆
+        elif "Circle" in str(d.shape):
+            draw_circle(d.shape,d.x,d.y)
+            points=get_point(d.shape,d.x,d.y)
+        #执行画矩形
+        elif "Square" in str(d.shape):
+            draw_square(d.shape,d.x,d.y)
+            points=get_point(d.shape,d.x,d.y)
+
+        shape=Shape(d.shape.name,d.x,d.y)
+        shape.points=points
+        
+        Shapelist.append(shape)
+        # points=get_point(shape,Shapelist)
+        # shape.points=points
+        #添加到shape列表中，把绘制过的每一个几何体保存
+        #解析内嵌文本命令
+        # if d.text is not None:
+        #     turtle.goto(x,y-16)
+        #     turtle.write(d.text.text)
+
+#四、解析打印指令
+def print_instruction(print):
+    for p in print:
+        turtle.goto(p.x,p.y)
+        turtle.write(p.text)
+
+#五、解析变换指令
+def transform_instruction(trans):
+ 
+    for t in trans:       
+        if t.translate is not None:
+            for _ in Shapelist:
+                if _.name == t.translate.shape.name:
+                    shapeobject=_ 
+            transform(t.translate,shapeobject,"translation")
+        if t.rotate is not None:
+            for _ in Shapelist:
+                if _.name == t.rotate.shape.name:
+                    shapeobject=_  
+            transform(t.rotate,shapeobject,"rotation")
+        if t.scale is not None:
+            for _ in Shapelist:
+                if _.name == t.scale.shape.name:
+                    shapeobject=_ 
+            transform(t.scale,shapeobject,"scale")
+
 #绘制坐标轴
 def draw_axis():
-    turtle.pencolor('black')
-    turtle.up()
-    turtle.goto(-400,0)
-    turtle.down()
-    turtle.goto(400,0)
-    turtle.up()
-    turtle.goto(0,400)
-    turtle.down()
-    turtle.goto(0,-400)
+    turtle.pencolor('black')  
+    turtle.up()  
+    turtle.goto(-400, 0)  
+    turtle.down()  
+    turtle.goto(400, 0)  
+
+    # 添加X轴刻度和标签  
+    for x in range(-400, 401, 50):  
+        turtle.up()  
+        turtle.goto(x, -10)  
+        turtle.down()  
+        turtle.goto(x, 10)  
+        # 添加刻度标签  
+        turtle.up()  
+        turtle.goto(x, -30)  
+        turtle.write(x, align="center")  
+
+    # 绘制Y轴  
+    turtle.up()  
+    turtle.goto(0, 400)  
+    turtle.down()  
+    turtle.goto(0, -400)  
+
+    # 添加Y轴刻度和标签  
+    for y in range(-400, 401, 50):  
+        turtle.up()  
+        turtle.goto(-10, y)  
+        turtle.down()  
+        turtle.goto(10, y)  
+        # 添加刻度标签  
+        turtle.up()  
+        turtle.goto(-30, y)  
+        turtle.write(y, align="center")  
+
+    # 添加箭头  
+    turtle.pensize(2)  
+    turtle.up()  
+    turtle.goto(420, 0)  # 右侧箭头  
+    turtle.down()  
+    turtle.goto(400, 10)  
+    turtle.goto(400, -10)  
+    turtle.goto(420, 0)  
+
+    turtle.up()  
+    turtle.goto(0, 420)  # 上侧箭头  
+    turtle.down()  
+    turtle.goto(10, 400)  
+    turtle.goto(-10, 400)  
+    turtle.goto(0, 420)  
+
     turtle.up()
     turtle.pencolor('red')
 
@@ -82,9 +209,11 @@ def draw_shape(shape):
         turtle.up() 
         turtle.end_fill()
 #画圆（含椭圆）
+
 def draw_circle(circle,x,y):
     turtle.pencolor(circle.line_color.color if circle.line_color is not None else 'black')
     turtle.fillcolor(circle.fill_color.color if circle.fill_color is not None else 'white')
+    turtle.pensize(circle.line_size.size if circle.line_size is not None else 1)
     radii = circle.radius.r   
     turtle.up() 
     turtle.goto(x, y)
@@ -111,6 +240,7 @@ def draw_circle(circle,x,y):
 def draw_square(square,x,y):
     turtle.pencolor(square.line_color.color if square.line_color is not None else 'black')
     turtle.fillcolor(square.fill_color.color if square.fill_color is not None else 'white')
+    turtle.pensize(square.line_size.size if square.line_size is not None else 1)
 
     if hasattr(square.special, 'width') and hasattr(square.special, 'height'):
         turtle.up()
@@ -174,7 +304,6 @@ def draw_line(l):
             turtle.left(l.direction.angle.degrees)
         turtle.forward(l.length)
 
-
 #得到顶点
 def get_point(shape,start_point_X,start_point_Y):
 
@@ -200,7 +329,6 @@ def get_point(shape,start_point_X,start_point_Y):
     else:
         print("error")
 
-    
 #计算shape的顶点
 def caculate_shape_point(shape,x1,y1):
     lines_points=[]#保存直线的顶点，直线是连续的
@@ -274,7 +402,6 @@ def caculate_square_point(shape,x1,y1):
 #变换主函数
 def transform(trans,shapeobject,transform_type):
     turtle.clear()
-    draw_axis()
     shape=trans.shape
     start_point_X=shapeobject.x
     start_point_Y=shapeobject.y
@@ -372,7 +499,6 @@ def transform(trans,shapeobject,transform_type):
         elif (transform_type=='rotation'):
             new_circle_points=bt.rotation(circle_points,roate_angle)
             
-
         elif (transform_type=='scale'):
             new_circle_points=bt.scale(circle_points,scale_X,scale_Y)
 
@@ -383,76 +509,17 @@ def transform(trans,shapeobject,transform_type):
 
 #整个场景的语句解析
 def algorithm(scene):
-    turtle.bgcolor(scene.background_color.color if scene.background_color is not None else "white")
-    x=0
-    y=0
-#解析draw命令
-    for d in scene.draw_instructions:
-        x=d.x
-        y=d.y
-        points=[]
-        curves_points=[]
-        turtle.penup()
-        turtle.goto(d.x if d.x is not None else 0,
-                d.y if d.y is not None else 0)
-
-        #解析in命令
-        # if d.inwhere is not None:
-        #     for s in Shapelist:
-        #         if s.name == d.inwhere.shape.name:
-        #             x=s.x+d.x
-        #             y=s.y+d.y
-        #             turtle.goto(x,y)
-        
-        turtle.pendown()
-        if "Shape" in str(d.shape):
-            draw_shape(d.shape)
-            lines_points,curves_points= get_point(d.shape,d.x,d.y)
-            points.append(lines_points)
-            points.append(curves_points)
-
-        #执行画圆
-        elif "Circle" in str(d.shape):
-            draw_circle(d.shape,d.x,d.y)
-            points=get_point(d.shape,d.x,d.y)
-        #执行画矩形
-        elif "Square" in str(d.shape):
-            draw_square(d.shape,d.x,d.y)
-            points=get_point(d.shape,d.x,d.y)
-
-        shape=Shape(d.shape.name,d.x,d.y)
-        shape.points=points
-        
-        Shapelist.append(shape)
-        # points=get_point(shape,Shapelist)
-        # shape.points=points
-        #添加到shape列表中，把绘制过的每一个几何体保存
-        #解析内嵌文本命令
-        # if d.text is not None:
-        #     turtle.goto(x,y-16)
-        #     turtle.write(d.text.text)
-            
-#解析 print命令
-    for p in scene.print:
-        turtle.goto(p.x,p.y)
-        turtle.write(p.text)
-    for t in scene.transform:
-        start_point_X=0
-        start_point_Y=0
-        
-        for _ in Shapelist:
-            if _.name == shape.name:
-                start_point_X=_.x
-                start_point_Y=_.y
-                shapeobject=_
-        if t.translate is not None:
-            transform(t.translate,shapeobject,"translation")
-        if t.rotate is not None:
-            transform(t.rotate,shapeobject,"rotation")
-        if t.scale is not None: 
-            transform(t.scale,shapeobject,"scale")
-
-
+    #一、解析背景颜色指令
+    bgcolor_instrusction(scene.background_color.color if scene.background_color is not None else "white")
+    #二、解析坐标轴指令
+    axis_instrusction(scene.axis.isaxis if scene.axis is not None else False)
+    #三、解析绘制指令
+    draw_instruction(scene.draw_instructions)
+    #四、解析打印指令
+    print_instruction(scene.print)
+    #五、解析变换指令
+    transform_instruction(scene.transform)
+    
 def main():
 #主函数
 
@@ -461,9 +528,9 @@ def main():
     turtle.Screen().title("图形绘制展示窗口")
     turtle.hideturtle()
     turtle.speed(0)
-    draw_axis()
     algorithm(scene)
     turtle.done()
 
 if __name__ == '__main__':
+    Shapelist=[]
     main()
