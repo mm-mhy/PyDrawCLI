@@ -1,5 +1,6 @@
 Scene:
     background_color=Background_Color?
+    axis=Axis?
     shapes*=Shape
     print*=PrintF
     square*=Square
@@ -10,7 +11,9 @@ Scene:
 Background_Color:
     'bgcolor' color=Color
 ;
-
+Axis:
+    'axis' isaxis=BOOL
+;
 Transform:
     translate=Translation|rotate=Rotation|scale=Scale
 ;
@@ -37,6 +40,7 @@ Shape:
 Circle:
     'circle' name=ID
         line_color=LineColor?
+        line_size=LineSize?
         fill_color=FillColor?
         radius=Radius
     'end'
@@ -44,6 +48,7 @@ Circle:
 Square:
     'square' name=ID
         line_color=LineColor?
+        line_size=LineSize?
         fill_color=FillColor?
         special=Special
     'end'
