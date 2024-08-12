@@ -37,6 +37,7 @@ Shape:
 Circle:
     'circle' name=ID
         line_color=LineColor?
+        line_size=LineSize?
         fill_color=FillColor?
         radius=Radius
     'end'
@@ -44,6 +45,7 @@ Circle:
 Square:
     'square' name=ID
         line_color=LineColor?
+        line_size=LineSize?
         fill_color=FillColor?
         special=Special
     'end'
