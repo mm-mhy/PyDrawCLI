@@ -253,7 +253,7 @@ def draw_circle(circle,x,y,linecolor,linesize,fillcolor):
         turtle.goto(x + a, y)  # 返回到起始位置
    
 #正方形（两种方法）
-def draw_square(square,x,linecolor,linesize,fillcolor):
+def draw_square(square,x,y,linecolor,linesize,fillcolor):
     turtle.pencolor(linecolor)
     turtle.fillcolor(fillcolor)
     turtle.pensize(linesize)
