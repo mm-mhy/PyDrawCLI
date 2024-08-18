@@ -12,4 +12,13 @@ DSL代码：
 
 ![7009150e52c5d5233d9b07c6127332f7](https://github.com/user-attachments/assets/4ef5229e-4d0f-44ba-a8b4-8316f6dab27a)
 
+
+图形的线条颜色，线条大小，填充颜色可以继承，但是父类必须要定义出来，不能是空定义，样例如下：
+s2,s3继承s1的线条颜色，线条大小，填充颜色，图形定义中s2重写了linesize为1，效果如下：
+代码：
+![image](https://github.com/user-attachments/assets/7934c26e-486b-4e89-b957-7f378db398ea)
+
+效果图：
+![image](https://github.com/user-attachments/assets/903e0b71-ea77-46b5-84ed-ccc48c94fcdf)
+
 参考textx官方教程文档：https://tomassetti.me/domain-specific-languages-in-python-with-textx/
