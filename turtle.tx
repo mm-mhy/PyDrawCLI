@@ -3,14 +3,17 @@
 Scene:
     background_color=Background_Color?
     axis=Axis?
-    shapes*=Shape
-    print*=PrintF
-    square*=Square
-    circle*=Circle
+    shapedefine*=ShapeDefine
     draw_instructions*=DrawInstruction
     transform*=Transform
+    print*=PrintF
 ;
 
+ShapeDefine:
+    shapes*=Shape
+    square*=Square
+    circle*=Circle
+;
 //背景颜色指令格式
 Background_Color:
     'bgcolor' color=Color
@@ -40,7 +43,7 @@ Scale:
 
 //自定义几何图形指令格式
 Shape:
-    'shape' name=ID
+    'shape' name=ID extends=Extends?
         line_color=LineColor?
         line_size=LineSize?
         fill_color=FillColor?
@@ -48,9 +51,10 @@ Shape:
         curves*=Curve
     'end'
 ;
+
 //定义圆指令格式
 Circle:
-    'circle' name=ID
+    'circle' name=ID extends=Extends?
         line_color=LineColor?
         line_size=LineSize?
         fill_color=FillColor?
@@ -59,12 +63,17 @@ Circle:
 ;
 //定义正方形指令格式
 Square:
-    'square' name=ID
+    'square' name=ID extends=Extends?
         line_color=LineColor?
         line_size=LineSize?
         fill_color=FillColor?
         special=Special
     'end'
+;
+
+//继承
+Extends:
+    'extends' shape=[Shape]
 ;
 
 //线条大小指令格式
