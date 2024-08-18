@@ -7,16 +7,26 @@ import Basic_trans as bt
 
 #shape类，用于存储模型信息，包含名称、开始位置、顶点点集
 class Shape:
-    def __init__(self, name: str, x: int, y: int):
+    def __init__(self, name: str, x: int, y: int,linecolor:str,linesize:str,fillcolor:str):
         self.name = name
         self.x = x
         self.y = y
+        self.linecolor=linecolor
+        self.linesize=linesize
+        self.fillcolor=fillcolor
         self.points = []
     def __str__(self):
         return self.name
 
+#根据形状名字获取形状的线条和填充颜色，以及线条粗细
+def get_linecolor_and_size(name:str):
+    for _ in Shapelist:
+        if _.name == name:
+            return _.linecolor,_.linesize,_.fillcolor
+
 #一、解析背景指令
 def bgcolor_instrusction(color:str):
+    bgcolor=color
     turtle.bgcolor(color)
 
 #二、解析坐标轴指令
@@ -32,11 +42,13 @@ def draw_instruction(draw_instructions):
     for d in draw_instructions:
         x=d.x
         y=d.y
+        linecolor=d.shape.line_color.color if d.shape.line_color is not None else "black"
+        linesize=d.shape.line_size.size if d.shape.line_size is not None else 1
+        fillcolor=d.shape.fill_color.color if d.shape.fill_color is not None else ""
         points=[]
         curves_points=[]
         turtle.penup()
-        turtle.goto(d.x if d.x is not None else 0,
-                d.y if d.y is not None else 0)
+        turtle.goto(d.x if d.x is not None else 0,d.y if d.y is not None else 0)
 
         #解析in命令
         # if d.inwhere is not None:
@@ -45,24 +57,28 @@ def draw_instruction(draw_instructions):
         #             x=s.x+d.x
         #             y=s.y+d.y
         #             turtle.goto(x,y)
-        
+        if d.shape.extends is not None:
+            line_color,line_size,fill_color=get_linecolor_and_size(d.shape.extends.shape.name)
+            linecolor=d.shape.line_color.color if d.shape.line_color is not None else line_color
+            linesize=d.shape.line_size.size if d.shape.line_size is not None else line_size
+            fillcolor=d.shape.fill_color.color if d.shape.fill_color is not None else fill_color
         turtle.pendown()
         if "Shape" in str(d.shape):
-            draw_shape(d.shape)
+            draw_shape(d.shape,linecolor,linesize,fillcolor)
             lines_points,curves_points= get_point(d.shape,d.x,d.y)
             points.append(lines_points)
             points.append(curves_points)
 
         #执行画圆
         elif "Circle" in str(d.shape):
-            draw_circle(d.shape,d.x,d.y)
+            draw_circle(d.shape,d.x,d.y,linecolor,linesize,fillcolor)
             points=get_point(d.shape,d.x,d.y)
         #执行画矩形
         elif "Square" in str(d.shape):
-            draw_square(d.shape,d.x,d.y)
+            draw_square(d.shape,d.x,d.y,linecolor,linesize,fillcolor)
             points=get_point(d.shape,d.x,d.y)
 
-        shape=Shape(d.shape.name,d.x,d.y)
+        shape=Shape(d.shape.name,d.x,d.y,linecolor,linesize,fillcolor)
         shape.points=points
         
         Shapelist.append(shape)
@@ -155,8 +171,6 @@ def draw_axis():
     turtle.up()
     turtle.pencolor('red')
 
-
-
 #将模型的曲线点集转化为一般二维数组
 def points_to_list(points):
     list=[]
@@ -194,10 +208,10 @@ def draw_curve_Bezier(points):
           i += 0.01 
 
 #自定义几何图形，可绘制曲线和直线
-def draw_shape(shape):
-        turtle.pencolor(shape.line_color.color if shape.line_color is not None else 'black')
-        turtle.fillcolor(shape.fill_color.color if shape.fill_color is not None else 'white')
-        turtle.pensize(shape.line_size.size if shape.line_size is not None else 1)
+def draw_shape(shape,linecolor,linesize,fillcolor):
+        turtle.pencolor(linecolor)
+        turtle.fillcolor(fillcolor)
+        turtle.pensize(linesize)
         turtle.down()
         turtle.begin_fill()
         #画直线
@@ -212,10 +226,10 @@ def draw_shape(shape):
         turtle.end_fill()
 #画圆（含椭圆）
 
-def draw_circle(circle,x,y):
-    turtle.pencolor(circle.line_color.color if circle.line_color is not None else 'black')
-    turtle.fillcolor(circle.fill_color.color if circle.fill_color is not None else 'white')
-    turtle.pensize(circle.line_size.size if circle.line_size is not None else 1)
+def draw_circle(circle,x,y,linecolor,linesize,fillcolor):
+    turtle.pencolor(linecolor)
+    turtle.fillcolor(fillcolor)
+    turtle.pensize(linesize)
     radii = circle.radius.r   
     turtle.up() 
     turtle.goto(x, y)
@@ -239,10 +253,10 @@ def draw_circle(circle,x,y):
         turtle.goto(x + a, y)  # 返回到起始位置
    
 #正方形（两种方法）
-def draw_square(square,x,y):
-    turtle.pencolor(square.line_color.color if square.line_color is not None else 'black')
-    turtle.fillcolor(square.fill_color.color if square.fill_color is not None else 'white')
-    turtle.pensize(square.line_size.size if square.line_size is not None else 1)
+def draw_square(square,x,linecolor,linesize,fillcolor):
+    turtle.pencolor(linecolor)
+    turtle.fillcolor(fillcolor)
+    turtle.pensize(linesize)
 
     if hasattr(square.special, 'width') and hasattr(square.special, 'height'):
         turtle.up()
@@ -521,12 +535,11 @@ def algorithm(scene):
     print_instruction(scene.print)
     #五、解析变换指令
     transform_instruction(scene.transform)
-    
 def main():
 #主函数
 
     turtle_meta = metamodel_from_file("turtle.tx")
-    scene = turtle_meta.model_from_file("test.turtle")
+    scene = turtle_meta.model_from_file("test_01.turtle")
     turtle.Screen().title("图形绘制展示窗口")
     turtle.hideturtle()
     turtle.speed(0)
